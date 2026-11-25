@@ -14,7 +14,7 @@ import os
 
 RANT = (
     "My printer has one job and it only does it when nothing matters. "
-    "The second a deadline is five minutes away, it jams, flashes a "
+    "The second a deadline is five minutes away, it jams, flashes an error "
     "light I have never seen before, and prints half a page in a "
     "language I did not ask for. I have shaken it, begged it, "
     "threatened it with a hammer. It knows. It waits. It is not "
@@ -36,6 +36,12 @@ def main() -> int:
     with open(OUTPUT_FILE, "w", encoding="utf-8", newline="") as f:
         f.write(RANT)
     os.chmod(OUTPUT_FILE, 0o644)
+    # Read-back check: the file on disk must be the rant byte-exact,
+    # with no trailing newline or extra content added.
+    with open(OUTPUT_FILE, "rb") as f:
+        written = f.read()
+    if written != RANT.encode("utf-8"):
+        raise ValueError("entry.txt does not match the rant byte-exact")
     return 0
 
 
